@@ -31,4 +31,5 @@ def convert_currencies(amount,src, to):
     return amount_in_usd * RATES[to]
     
 if __name__ == "__main__":
+    # app runs on port 3000
     app.run(debug=True, port=5000)
