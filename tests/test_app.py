@@ -6,7 +6,7 @@ class CurrencyConverterTestCase(unittest.TestCase):
         self.client = app.test_client()
     
     def test_health(self):
-        # Arrange + Act
+        # Arrange + Act!
         response = self.client.get("/health")
         
         # Assert
