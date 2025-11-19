@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+import os
 
 app = Flask(__name__)
+CORS(app, resources=r'/*')
 
 RATES = {
         'USD': 1.0,
@@ -13,17 +16,19 @@ RATES = {
 def health():
     return jsonify({'status': 'ok'}), 200
 
-
 @app.route('/convert',methods=['POST'])
-def convert():
+def convert(): 
     data = request.get_json()
-    amount = data.get('amount')
+    amount = float(data.get('amount'))
     src_curr = data.get('from')
-    dist_curr = data.get('to')
+    destCurr = data.get('to')
     
-    converted = convert_currencies(amount,src_curr,dist_curr)
+    if amount <= 0:
+        return jsonify({"error": "Invalid amount"}), 400
+    converted = convert_currencies(amount,src_curr,destCurr)
     return jsonify({
-        'amount': converted
+        'amount': round(converted, 2),
+        'destCurrency':  destCurr
     }), 200
 
 def convert_currencies(amount,src, to):  
@@ -32,4 +37,4 @@ def convert_currencies(amount,src, to):
     
 if __name__ == "__main__":
     # app runs on port 3000
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000, host="0.0.0.0")
