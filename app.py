@@ -23,7 +23,10 @@ def convert():
     if amount <= 0:
         return jsonify({"error": "Invalid amount"}), 400
     converted = convert_currencies(amount, src_curr, destCurr)
-    return jsonify({"amount": round(converted, 2), "destCurrency": destCurr}), 200
+    return jsonify({
+        "amount": round(converted, 2),
+        "destCurrency": destCurr
+    }), 200
 
 
 def convert_currencies(amount, src, to):
