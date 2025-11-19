@@ -1,35 +1,39 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+CORS(app, resources=r"/*")
 
-RATES = {
-        'USD': 1.0,
-        'EUR': 0.92, 
-        'ILS': 3.7,
-        'GBT': 0.8  
-    }
-  
-@app.route('/health', methods=['GET'])
+RATES = {"USD": 1.0, "EUR": 0.92, "ILS": 3.7, "GBT": 0.8}
+
+
+@app.route("/health", methods=["GET"])
 def health():
-    return jsonify({'status': 'ok'}), 200
+    return jsonify({"status": "ok"}), 200
 
 
-@app.route('/convert',methods=['POST'])
+@app.route("/convert", methods=["POST"])
 def convert():
     data = request.get_json()
-    amount = data.get('amount')
-    src_curr = data.get('from')
-    dist_curr = data.get('to')
-    
-    converted = convert_currencies(amount,src_curr,dist_curr)
+    amount = float(data.get("amount"))
+    src_curr = data.get("from")
+    destCurr = data.get("to")
+
+    if amount <= 0:
+        return jsonify({"error": "Invalid amount"}), 400
+    converted = convert_currencies(amount, src_curr, destCurr)
     return jsonify({
-        'amount': converted
+        "amount": round(converted, 2),
+        "destCurrency": destCurr
     }), 200
 
-def convert_currencies(amount,src, to):  
+
+def convert_currencies(amount, src, to):
     amount_in_usd = amount / RATES[src]
     return amount_in_usd * RATES[to]
-    
+
+
 if __name__ == "__main__":
     # app runs on port 3000
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000, host="0.0.0.0")
